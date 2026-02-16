@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLE Mesh Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+
+<body>
+    <header id="header">
+        <h1>BLE Mesh Dashboard</h1>
+        <div id="connection-status">
+            <span class="status-dot"></span>
+            <span id="connection-text">Connecting...</span>
+        </div>
+    </header>
+
+    <main id="main">
+        <div id="graph-container">
+            <div id="disconnect-overlay" style="display: none;">
+                <div class="overlay-content">
+                    <h2>Gateway Disconnected</h2>
+                    <p>Waiting for connection...</p>
+                </div>
+            </div>
+            <svg id="mesh-graph"></svg>
+        </div>
+        <aside id="sidebar">
+            <div id="node-details">
+                <h2>Node Details</h2>
+                <div id="node-content">
+                    <p class="placeholder">Click a node to inspect</p>
+                </div>
+            </div>
+            <div id="power-manager-panel">
+                <h2>Power Manager</h2>
+                <div id="pm-content">
+                    <p class="placeholder">Waiting for data...</p>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <footer id="status-bar">
+        <span id="node-summary">Loading...</span>
+        <span id="last-update">—</span>
+    </footer>
+
+    <script src="/static/dashboard.js"></script>
+</body>
+
+</html>

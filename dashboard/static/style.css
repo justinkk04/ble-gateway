@@ -1,0 +1,243 @@
+:root {
+    --bg-primary: #0d1117;
+    --bg-secondary: #161b22;
+    --bg-card: #1c2333;
+    --border: #30363d;
+    --text-primary: #e6edf3;
+    --text-secondary: #8b949e;
+    --accent-green: #3fb950;
+    --accent-blue: #58a6ff;
+    --accent-orange: #d29922;
+    --accent-purple: #bc8cff;
+    --accent-red: #f85149;
+    --font: 'Inter', -apple-system, system-ui, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Header */
+#header {
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 60px;
+}
+
+h1 {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+#connection-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--text-secondary);
+    transition: background-color 0.3s;
+}
+
+.status-dot.connected {
+    background-color: var(--accent-green);
+}
+
+.status-dot.disconnected {
+    background-color: var(--accent-red);
+}
+
+.status-dot.stale {
+    background-color: var(--accent-orange);
+}
+
+/* Main Layout */
+#main {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+}
+
+#graph-container {
+    flex: 1;
+    position: relative;
+    background-color: var(--bg-primary);
+}
+
+svg#mesh-graph {
+    width: 100%;
+    height: 100%;
+}
+
+#sidebar {
+    width: 320px;
+    background-color: var(--bg-secondary);
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+/* Sidebar Panels */
+#node-details,
+#power-manager-panel {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+h2 {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+}
+
+.placeholder {
+    color: var(--text-secondary);
+    font-style: italic;
+    font-size: 0.9rem;
+}
+
+/* Data Grid */
+.data-grid {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.label {
+    color: var(--text-secondary);
+}
+
+.value {
+    font-family: monospace;
+    font-weight: 600;
+}
+
+/* Progress Bar */
+.progress-bar {
+    height: 6px;
+    background-color: var(--bg-card);
+    border-radius: 3px;
+    margin-top: 0.5rem;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: var(--accent-green);
+    transition: width 0.5s ease;
+}
+
+/* Footer */
+#status-bar {
+    background-color: var(--bg-secondary);
+    border-top: 1px solid var(--border);
+    padding: 0.5rem 1.5rem;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Graph Elements */
+.node circle {
+    stroke: #fff;
+    stroke-width: 1.5px;
+    cursor: pointer;
+    transition: stroke-width 0.2s;
+}
+
+.node:hover circle {
+    stroke-width: 3px;
+}
+
+.node text {
+    font-family: var(--font);
+    font-size: 10px;
+    fill: var(--text-primary);
+    pointer-events: none;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.link {
+    stroke-opacity: 0.6;
+    stroke-width: 1.5px;
+}
+
+/* Disconnect Overlay */
+#disconnect-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(13, 17, 23, 0.85);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    flex-direction: column;
+}
+
+.overlay-content {
+    text-align: center;
+    color: var(--accent-red);
+}
+
+.overlay-content h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Stale Data */
+.stale-warning {
+    color: var(--accent-orange);
+    font-weight: bold;
+}
+
+.offline-error {
+    color: var(--accent-red);
+    font-weight: bold;
+}
+
+/* Offline node pulse animation */
+@keyframes pulse-offline {
+    0%, 100% { stroke-opacity: 0.3; }
+    50% { stroke-opacity: 0.8; }
+}
+
+.node.offline circle {
+    animation: pulse-offline 2s ease-in-out infinite;
+}
+
+/* Selected node highlight */
+.node.selected circle {
+    stroke: #fff;
+    stroke-width: 3px;
+}

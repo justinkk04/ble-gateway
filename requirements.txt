@@ -1,0 +1,2 @@
+# BLE Gateway Dependencies
+bleak>=0.21.0
