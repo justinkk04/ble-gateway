@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLE Mesh Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+
+<!-- ===== Header ===== -->
+<header id="header">
+    <div id="header-left">
+        <h1>BLE Mesh Dashboard</h1>
+    </div>
+    <nav id="tab-bar">
+        <button class="tab active" data-tab="topology">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="3"/><circle cx="5" cy="19" r="3"/><circle cx="19" cy="19" r="3"/><line x1="12" y1="8" x2="5" y2="16"/><line x1="12" y1="8" x2="19" y2="16"/></svg>
+            Topology
+        </button>
+        <button class="tab" data-tab="nodes">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            Nodes
+        </button>
+        <button class="tab" data-tab="history">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            History
+        </button>
+        <button class="tab" data-tab="console">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+            Console
+        </button>
+        <button class="tab" data-tab="settings">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            Settings
+        </button>
+    </nav>
+    <div id="header-right">
+        <span class="status-dot"></span>
+        <span id="connection-text">Connecting...</span>
+    </div>
+</header>
+
+<!-- ===== Tab Panels ===== -->
+<main id="main">
+
+    <!-- TAB 1: Topology -->
+    <section id="panel-topology" class="tab-panel active">
+        <div id="topo-content">
+            <div id="graph-container">
+                <div id="disconnect-overlay" style="display:none">
+                    <div class="overlay-content">
+                        <h2>Gateway Disconnected</h2>
+                        <p>Waiting for connection...</p>
+                    </div>
+                </div>
+                <svg id="mesh-graph"></svg>
+            </div>
+            <aside id="topo-sidebar">
+                <div id="topo-node-details">
+                    <h2>Node Details</h2>
+                    <div id="topo-node-content">
+                        <p class="placeholder">Click a node to inspect</p>
+                    </div>
+                </div>
+                <div id="power-manager-panel">
+                    <h2>Power Manager</h2>
+                    <div id="pm-content">
+                        <p class="placeholder">Waiting for data...</p>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </section>
+
+    <!-- TAB 2: Nodes -->
+    <section id="panel-nodes" class="tab-panel">
+        <div id="nodes-layout">
+            <div id="nodes-list">
+                <div id="nodes-list-header">
+                    <h2>Mesh Nodes</h2>
+                    <span id="nodes-count" class="meta-text"></span>
+                </div>
+                <div id="nodes-cards"></div>
+            </div>
+            <div id="node-detail-panel">
+                <div id="node-detail-content">
+                    <p class="placeholder">Select a node from the list</p>
+                </div>
+                <div id="node-chart-container">
+                    <div id="node-chart-header">
+                        <h2>History</h2>
+                        <select id="chart-metric">
+                            <option value="power_mw">Power (mW)</option>
+                            <option value="voltage">Voltage (V)</option>
+                            <option value="current_ma">Current (mA)</option>
+                            <option value="duty">Duty (%)</option>
+                        </select>
+                        <select id="chart-window">
+                            <option value="5">5 min</option>
+                            <option value="15">15 min</option>
+                            <option value="30" selected>30 min</option>
+                            <option value="60">1 hour</option>
+                        </select>
+                    </div>
+                    <div id="node-chart-area">
+                        <svg id="node-chart-svg"></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TAB 3: History -->
+    <section id="panel-history" class="tab-panel">
+        <div id="history-section">
+            <div id="history-header">
+                <h2>Sensor History</h2>
+                <div id="history-controls">
+                    <select id="history-node-filter">
+                        <option value="">All Nodes</option>
+                    </select>
+                    <select id="history-limit">
+                        <option value="50">50 rows</option>
+                        <option value="100">100 rows</option>
+                        <option value="200" selected>200 rows</option>
+                        <option value="500">500 rows</option>
+                    </select>
+                    <button id="history-refresh">&#x21bb; Refresh</button>
+                    <span id="history-info" class="meta-text"></span>
+                </div>
+            </div>
+            <div id="history-table-wrap">
+                <table id="history-table">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Node</th>
+                            <th>Duty %</th>
+                            <th>Voltage (V)</th>
+                            <th>Current (mA)</th>
+                            <th>Power (mW)</th>
+                            <th>Target %</th>
+                            <th>Cmd %</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-body">
+                        <tr><td colspan="9" class="placeholder">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="history-pagination">
+                <button id="page-prev" disabled>&laquo; Prev</button>
+                <span id="page-info">-</span>
+                <button id="page-next" disabled>Next &raquo;</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- TAB 4: Console -->
+    <section id="panel-console" class="tab-panel">
+        <div id="console-container">
+            <div id="console-output"></div>
+            <div id="console-input-row">
+                <span id="console-prompt">&gt;</span>
+                <input type="text" id="console-input"
+                       placeholder="Type a command... (help for list)"
+                       autocomplete="off" spellcheck="false">
+            </div>
+        </div>
+    </section>
+
+    <!-- TAB 5: Settings -->
+    <section id="panel-settings" class="tab-panel">
+        <div id="settings-scroll">
+
+            <!-- Appearance -->
+            <div class="settings-section">
+                <h2>Appearance</h2>
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <span class="setting-label">Theme</span>
+                        <span class="setting-desc">Switch between dark and light mode</span>
+                    </div>
+                    <div class="toggle-group" id="theme-toggle">
+                        <button class="toggle-btn active" data-value="dark">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                            Dark
+                        </button>
+                        <button class="toggle-btn" data-value="light">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                            Light
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Node Management -->
+            <div class="settings-section">
+                <h2>Node Management</h2>
+                <p class="setting-desc" style="margin-bottom:0.75rem">Rename or remove nodes from the dashboard. Removing a node deletes all its stored history.</p>
+                <div id="settings-nodes-list">
+                    <p class="placeholder">Loading nodes...</p>
+                </div>
+            </div>
+
+            <!-- Data Management -->
+            <div class="settings-section">
+                <h2>Data Management</h2>
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <span class="setting-label">Database</span>
+                        <span class="setting-desc" id="settings-db-info">Loading...</span>
+                    </div>
+                </div>
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <span class="setting-label">Clear All History</span>
+                        <span class="setting-desc">Permanently delete all sensor readings for every node</span>
+                    </div>
+                    <button class="btn-danger" id="btn-clear-all-history">Clear All</button>
+                </div>
+            </div>
+
+            <!-- About -->
+            <div class="settings-section">
+                <h2>About</h2>
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <span class="setting-label">BLE Mesh Dashboard</span>
+                        <span class="setting-desc">v0.9 &mdash; Reads mesh_state.json from gateway.py</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+</main>
+
+<!-- ===== Footer ===== -->
+<footer id="status-bar">
+    <span id="node-summary">Loading...</span>
+    <span id="db-stats"></span>
+    <span id="last-update">-</span>
+</footer>
+
+<script src="/static/dashboard.js"></script>
+</body>
+</html>
