@@ -1,31 +1,37 @@
 {
-  "timestamp": "2026-02-16T15:39:37.758257",
+  "timestamp": "2026-02-17T16:07:56.705509",
   "gateway": {
     "connected": false,
     "device_name": "ESP-BLE-MESH",
     "device_address": "98:A3:16:B1:C9:8A"
   },
-  "power_manager": null,
+  "power_manager": {
+    "active": false,
+    "threshold_mw": null,
+    "budget_mw": null,
+    "priority_node": null,
+    "total_power_mw": 46.0
+  },
   "nodes": {
     "1": {
       "role": "sensing",
       "duty": 0,
-      "voltage": 12.297,
+      "voltage": 12.294,
       "current": 2.5,
       "power": 30.7,
       "responsive": true,
-      "last_seen": 1771277976.3930922,
+      "last_seen": 1771366071.780313,
       "commanded_duty": 0,
       "target_duty": 0
     },
     "2": {
       "role": "sensing",
       "duty": 0,
-      "voltage": 12.24,
+      "voltage": 12.221,
       "current": 1.25,
       "power": 15.3,
       "responsive": true,
-      "last_seen": 1771277976.3443553,
+      "last_seen": 1771366071.8284035,
       "commanded_duty": 0,
       "target_duty": 0
     }

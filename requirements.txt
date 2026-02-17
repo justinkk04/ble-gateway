@@ -1,2 +1,4 @@
 # BLE Gateway Dependencies
 bleak>=0.21.0
+pip install flask
+pip inatll tui /* For the TUI, you can use a library like 'textual' or 'rich' to create a terminal-based user interface. */
